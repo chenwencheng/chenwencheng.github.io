@@ -5,20 +5,80 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>learn vue</title>
-    <script type="text/javascript" src="./libs/vue.js"></script>
+    <link rel="stylesheet" href="./libs/bootstrap-3.3.7/css/bootstrap.min.css">
 </head>
 <body>
 <div id="app">
-    <p>{{ msg }}</p>
-    <p><input type="text" v-model="msg"></p>
+    <div class="container">
+        <div class="panel panel-success">
+            <div class="panel-heading">发表意见</div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <span class="input-group-addon">你的大名</span>
+                    <input type="text" class="form-control" v-model="name">
+                </div>
+                <div class="input-group" style="margin: 10px auto;">
+                    <span class="input-group-addon">有啥意见</span>
+                    <textarea class="form-control" v-model="content"></textarea>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-default" @click="submitMsg">发表</button>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" v-for="msg in msgList">
+            <div class="panel-heading">{{ msg.name }}</div>
+            <div class="panel-body">
+                {{ msg.content }}
+            </div>
+        </div>
+    </div>
 </div>
+<script type="text/javascript" src="./libs/vue-2.6.11/vue.js"></script>
+<script type="text/javascript" src="./libs/jquery-3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="./libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 var vm  = new Vue({
     el: "#app",
     data: {
-        msg: "hello world",
+        name: "",
+        content: "",
+        msgList: [],
+        msgKey: "msgList",
     },
-    methods: {},
+    created: function () {
+        this.msgList    = this.getMsgList();
+    },
+    methods: {
+        submitMsg: function () {
+            if ('' === this.name) {
+                alert('你的大名');
+                return;
+            }
+            if ('' === this.content) {
+                alert('说点啥...');
+                return;
+            }
+            let msgList = this.getMsgList();
+            msgList.unshift({
+                name: this.name,
+                content: this.content
+            });
+            localStorage.setItem(this.msgKey, JSON.stringify(msgList));
+            this.name = this.content = '';
+            location.href='';
+        },
+        getMsgList: function () {
+
+            let msgList = localStorage.getItem(this.msgKey);
+            return  JSON.parse(msgList ? msgList : '[]');
+        }
+    },
+    watch: {
+        msgList: function () {
+
+        }
+    }
 });
 </script>
 </body>
